@@ -3,9 +3,11 @@ using System.Globalization;
 
 byte failures = 0;
 short anio, mes, dia;
+var cal = CultureInfo.CurrentCulture.Calendar;
+
 do
 {
-    if (++failures > 1)
+    if (failures++ > 0)
         Console.WriteLine("Año inválido, intente de nuevo...");
 
     Console.Write("¿En qué año naciste?: ");
@@ -16,19 +18,19 @@ do
 failures = 0;
 do
 {
-    if (++failures > 1)
+    if (failures++ > 0)
         Console.WriteLine("Mes inválido, intente de nuevo...");
 
     Console.Write("¿En qué mes naciste? (1-12): ");
 } while (!short.TryParse(Console.ReadLine(), out mes)
     || mes < 0
-    || mes > 13);
+    || mes >= 13);
 
 failures = 0;
 var daysInMonth = (short) DateTime.DaysInMonth(anio, mes);
 do
 {
-    if (++failures > 1)
+    if (failures++ > 0)
         Console.WriteLine("Día inválido, intente de nuevo...");
 
     Console.Write($"¿En qué día naciste? (1-{daysInMonth}): ");
@@ -36,53 +38,62 @@ do
     || dia < 0
     || dia > daysInMonth);
 
+var fNac = new DateTime(anio, mes, dia);
 DateTime today = DateTime.Now.Date;
+
+if (fNac > today)
+    throw new ApplicationException("Fecha futura! Aùn no has nacido.");
+
 short totalYears = (short)(today.Year - anio);
-short totalMonths;
-if (mes > today.Month)
-{
-    --totalYears;
-    totalMonths = (short)today.Month;
-}
-else
-    totalMonths = (short)(today.Month - mes);
-
 short totalDays;
-if (dia > today.Day)
+if (mes > today.Month || (mes == today.Month && dia > today.Day))
 {
-    --totalYears;
-    totalDays = (short)(today.Day);
+    // birthday is ahead
+    --totalYears;    
+    totalDays = (short)today.DayOfYear;
 }
 else
-    totalDays = (short)(today.Day - dia);
-
-if (totalMonths == 0 && totalDays == 0)
 {
+    // birthday passed, calculate days old
+    totalDays = (short)(today - new DateTime(today.Year, mes, dia)).Days;
+}
+
+if (totalDays == 0)
+{
+    // happy b-day
     Console.WriteLine("Feliz cumpleaños!! Cumples {0} año{1}.", 
         totalYears, totalYears > 1 || totalYears == 0 ? "s" : "");
 }
 else
 {
-    Console.WriteLine("Tu edad es: {0} año{1}, {2} mes{3} y {4} día{5}",
-        totalYears, totalYears > 1 || totalYears == 0 ? "s" : "",
-        totalMonths, totalMonths > 1 || totalMonths == 0 ? "es" : "",
+    Console.WriteLine("Tu edad es: {0} año{1} y {2} día{3}",
+        totalYears, totalYears > 1 || totalYears == 0 ? "s" : "",        
         totalDays, totalDays > 1 || totalDays == 0 ? "s" : "");
 }
 
-var fNac = new DateTime(anio, mes, dia);
-var lastDayOfYear = new DateTime(anio, 12, CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(anio, 12));
-var daysSinceBornTS = lastDayOfYear - fNac;
-short daysSinceBorn = (short)daysSinceBornTS.Days;
-for(short i = (short)(anio + 1); i < DateTime.Now.Year; i++)
+short daysSinceBorn;
+if (anio < DateTime.Now.Year)
 {
-    daysSinceBorn += (short)CultureInfo.CurrentCulture.Calendar.GetDaysInYear(i);
+    var lastDayOfYear = new DateTime(anio, 12, cal.GetDaysInMonth(anio, 12));
+    var daysSinceBornTS = lastDayOfYear - fNac;
+    daysSinceBorn = (short)daysSinceBornTS.Days;
+    for (short i = (short)(anio + 1); i < DateTime.Now.Year; i++)
+    {
+        daysSinceBorn += (short)cal.GetDaysInYear(i);
+    }
+    daysSinceBorn += (short)((DateTime.Now - new DateTime(DateTime.Now.Year, 1, 1)).Days + 1);
 }
+else
+    daysSinceBorn = (short) (DateTime.Today - fNac).Days;
 
-daysSinceBorn += (short)((DateTime.Now - new DateTime(DateTime.Now.Year, 1, 1)).Days + 1);
 var t1 = DateTime.Now - fNac;
 Trace.Assert(t1.Days == daysSinceBorn);
 
-t1 = (DateTime.Now - new DateTime(DateTime.Now.Year, mes, dia));
+var thisYearBirthday = new DateTime(DateTime.Now.Year, mes, dia);
+if (thisYearBirthday < today)
+    t1 = (DateTime.Now - thisYearBirthday);
+else
+    t1 = TimeSpan.FromDays(today.DayOfYear) + DateTime.Now.TimeOfDay;
 
 Console.WriteLine("O más precisamente: {0} años, {1} días, {2} horas, {3} minutos y {4} segundos.",
     totalYears,
