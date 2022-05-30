@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 
-byte i = 0;
+byte failures = 0;
 short anio, mes, dia;
 do
 {
-    if (++i > 1)
+    if (++failures > 1)
         Console.WriteLine("Año inválido, intente de nuevo...");
 
     Console.Write("¿En qué año naciste?: ");
@@ -13,10 +13,10 @@ do
     || anio < 1900
     || anio > DateTime.Now.Year);
 
-i = 0;
+failures = 0;
 do
 {
-    if (++i > 1)
+    if (++failures > 1)
         Console.WriteLine("Mes inválido, intente de nuevo...");
 
     Console.Write("¿En qué mes naciste? (1-12): ");
@@ -24,11 +24,11 @@ do
     || mes < 0
     || mes > 13);
 
-i = 0;
+failures = 0;
 var daysInMonth = (short) DateTime.DaysInMonth(anio, mes);
 do
 {
-    if (++i > 1)
+    if (++failures > 1)
         Console.WriteLine("Día inválido, intente de nuevo...");
 
     Console.Write($"¿En qué día naciste? (1-{daysInMonth}): ");
@@ -73,9 +73,9 @@ var fNac = new DateTime(anio, mes, dia);
 var lastDayOfYear = new DateTime(anio, 12, CultureInfo.CurrentCulture.Calendar.GetDaysInMonth(anio, 12));
 var daysSinceBornTS = lastDayOfYear - fNac;
 short daysSinceBorn = (short)daysSinceBornTS.Days;
-for(short j = (short)(anio + 1); j < DateTime.Now.Year; j++)
+for(short i = (short)(anio + 1); i < DateTime.Now.Year; i++)
 {
-    daysSinceBorn += (short)CultureInfo.CurrentCulture.Calendar.GetDaysInYear(j);
+    daysSinceBorn += (short)CultureInfo.CurrentCulture.Calendar.GetDaysInYear(i);
 }
 
 daysSinceBorn += (short)((DateTime.Now - new DateTime(DateTime.Now.Year, 1, 1)).Days + 1);
