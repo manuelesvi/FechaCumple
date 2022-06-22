@@ -50,7 +50,8 @@ if (mes > today.Month || (mes == today.Month && dia > today.Day))
 {
     // birthday is ahead
     --totalYears;    
-    totalDays = (short)today.DayOfYear;
+    DateTime lastBday = new DateTime(today.Year-1, mes, dia);
+    totalDays = (short)(today - lastBday).Days;
 }
 else
 {
@@ -93,7 +94,7 @@ var thisYearBirthday = new DateTime(DateTime.Now.Year, mes, dia);
 if (thisYearBirthday < today)
     t1 = (DateTime.Now - thisYearBirthday);
 else
-    t1 = TimeSpan.FromDays(today.DayOfYear) + DateTime.Now.TimeOfDay;
+    t1 = DateTime.Now - new DateTime(DateTime.Now.Year -1, mes, dia);
 
 Console.WriteLine("O más precisamente: {0} años, {1} días, {2} horas, {3} minutos y {4} segundos.",
     totalYears,
