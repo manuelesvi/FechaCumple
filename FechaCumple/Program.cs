@@ -3,7 +3,6 @@ using System.Globalization;
 
 byte failures = 0;
 short anio, mes, dia;
-var cal = CultureInfo.CurrentCulture.Calendar;
 
 do
 {
@@ -72,6 +71,7 @@ else
         totalDays, totalDays > 1 || totalDays == 0 ? "s" : "");
 }
 
+Calendar cal = CultureInfo.CurrentCulture.Calendar;
 short daysSinceBorn;
 if (anio < DateTime.Now.Year)
 {
@@ -94,12 +94,13 @@ var thisYearBirthday = new DateTime(DateTime.Now.Year, mes, dia);
 if (thisYearBirthday < today)
     t1 = (DateTime.Now - thisYearBirthday);
 else
-    t1 = DateTime.Now - new DateTime(DateTime.Now.Year -1, mes, dia);
+    t1 = DateTime.Now - new DateTime(DateTime.Now.Year - 1, mes, dia);
 
 Console.WriteLine("O más precisamente: {0} años, {1} días, {2} horas, {3} minutos y {4} segundos.",
     totalYears,
     t1.Days, t1.Hours, t1.Minutes, t1.Seconds);
 
-Console.WriteLine("La Tierra ha girado {0} veces sobre su propio eje desde el día en que naciste.", daysSinceBorn.ToString("N0"));
+Console.WriteLine("La Tierra ha girado {0} veces sobre su propio eje desde el día en que naciste.",
+    daysSinceBorn.ToString("N0"));
 Console.WriteLine();
 Console.ReadKey();
