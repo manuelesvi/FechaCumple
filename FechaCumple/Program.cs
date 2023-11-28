@@ -41,7 +41,7 @@ var fNac = new DateTime(anio, mes, dia);
 DateTime today = DateTime.Now.Date;
 
 if (fNac > today)
-    throw new ApplicationException("Fecha futura! Aùn no has nacido.");
+    throw new ApplicationException("Fecha futura! Aún no has nacido.");
 
 short totalYears = (short)(today.Year - anio);
 short totalDays;
@@ -96,11 +96,14 @@ if (thisYearBirthday < today)
 else
     t1 = DateTime.Now - new DateTime(DateTime.Now.Year - 1, mes, dia);
 
-Console.WriteLine("O más precisamente: {0} años, {1} días, {2} horas, {3} minutos y {4} segundos.",
+Console.WriteLine(
+    "O más precisamente: {0} años, {1} días, {2} horas, {3} minutos y {4} segundos.",
     totalYears,
     t1.Days, t1.Hours, t1.Minutes, t1.Seconds);
 
-Console.WriteLine("La Tierra ha girado {0} veces sobre su propio eje desde el día en que naciste.",
+Console.WriteLine(
+    "La Tierra ha girado {0} veces sobre su propio eje desde el día en que naciste.",
     daysSinceBorn.ToString("N0"));
+
 Console.WriteLine();
 Console.ReadKey();
