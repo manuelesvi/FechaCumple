@@ -41,11 +41,13 @@ var fNac = new DateTime(anio, mes, dia);
 DateTime today = DateTime.Now.Date;
 
 if (fNac > today)
-    throw new ApplicationException("Fecha futura! Aún no has nacido.");
+    throw new ApplicationException(
+        "Fecha futura! Aún no has nacido.");
 
 short totalYears = (short)(today.Year - anio);
 short totalDays;
-if (mes > today.Month || (mes == today.Month && dia > today.Day))
+if (mes > today.Month 
+    || (mes == today.Month && dia > today.Day))
 {
     // birthday is ahead
     --totalYears;    
@@ -54,8 +56,9 @@ if (mes > today.Month || (mes == today.Month && dia > today.Day))
 }
 else
 {
+    var yourBirthday = new DateTime(today.Year, mes, dia);
     // birthday passed, calculate days old
-    totalDays = (short)(today - new DateTime(today.Year, mes, dia)).Days;
+    totalDays = (short) (today - yourBirthday).Days;
 }
 
 if (totalDays == 0)
@@ -75,14 +78,20 @@ Calendar cal = CultureInfo.CurrentCulture.Calendar;
 short daysSinceBorn;
 if (anio < DateTime.Now.Year)
 {
-    var lastDayOfYear = new DateTime(anio, 12, cal.GetDaysInMonth(anio, 12));
+    var lastDayOfYear = 
+        new DateTime(anio, 12, 
+                     cal.GetDaysInMonth(anio, 12));
+    
     var daysSinceBornTS = lastDayOfYear - fNac;
     daysSinceBorn = (short)daysSinceBornTS.Days;
     for (short i = (short)(anio + 1); i < DateTime.Now.Year; i++)
     {
         daysSinceBorn += (short)cal.GetDaysInYear(i);
     }
-    daysSinceBorn += (short)((DateTime.Now - new DateTime(DateTime.Now.Year, 1, 1)).Days + 1);
+    daysSinceBorn += (short)
+        ((DateTime.Now 
+         - new DateTime(DateTime.Now.Year, 1, 1))
+         .Days + 1);
 }
 else
     daysSinceBorn = (short) (DateTime.Today - fNac).Days;
